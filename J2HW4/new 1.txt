@@ -1,0 +1,12 @@
+С первым заданием работать не с массивом, а с текстовым файлом
+
+Проинециализировать телефонный справочник из файла
+
+
+  StringBuffer buffer = new StringBuffer();
+                try (BufferedReader file = new BufferedReader (new FileReader("logChat.txt"))) {
+                    String str;
+                    while (file.ready())
+                        buffer.append(file.readLine() + "\n");
+                    str = buffer.toString();
+                    file.write(jtField.getText() + "\n");
