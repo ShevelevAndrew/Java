@@ -32,17 +32,48 @@ class SimpleClient {
              PrintWriter writer = new PrintWriter(socket.getOutputStream());
              Scanner scanner = new Scanner(System.in)) {
             System.out.println(CONNECT_TO_SERVER);
-            do {
+            new Thread(new ClientReeder(socket)).start(); //Second solution
+            //BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream())); //The first variant of the solution
+                do {
                 System.out.print(CLIENT_PROMPT);
                 message = scanner.nextLine();
                 writer.println(message);
                 writer.flush();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                System.out.println(reader.readLine());
+                //System.out.println(reader.readLine()); //The first variant of the solution
             } while (!message.equals(EXIT_COMMAND));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
         System.out.println(CONNECT_CLOSED);
     }
+
+
+    class ClientReeder implements Runnable {
+        BufferedReader reader;
+        Socket socket;
+
+        ClientReeder(Socket clientSocket) {
+            try {
+                socket = clientSocket;
+                reader = new BufferedReader(
+                        new InputStreamReader(socket.getInputStream()));
+            } catch(Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
+        @Override
+        public void run() {
+            String message;
+            try {
+                while(true){
+                    message = reader.readLine();
+                    System.out.println(message);
+                }
+            } catch(Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
+
 }
